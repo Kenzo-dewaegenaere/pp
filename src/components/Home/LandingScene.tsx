@@ -1,6 +1,7 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei'; 
+import { OrbitControls } from '@react-three/drei';
+import { Model } from '../../../public/Hacker_room_low_poly.tsx';
 
 const Home: React.FC = () => {
   return (
@@ -8,11 +9,10 @@ const Home: React.FC = () => {
         <Canvas>
         <OrbitControls />
         <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <mesh>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="hotpink" />
-        </mesh>
+        <pointLight position={[100, 100, 100]} />
+
+
+        <Model />
         </Canvas>
     </>
   );
