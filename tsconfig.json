@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "public/Hacker_room_low_poly.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
