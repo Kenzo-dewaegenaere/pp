@@ -14,7 +14,7 @@ const Home: React.FC = () => {
         <ambientLight intensity={0.5} />
         <Model />
         <EffectComposer>
-          <Pixelation granularity={4} />
+          <Pixelation granularity={3} />
         </EffectComposer>
       </Canvas>
     </>
