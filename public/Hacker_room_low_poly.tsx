@@ -89,14 +89,14 @@ type ContextType = Record<string, React.ForwardRefExoticComponent<JSX.IntrinsicE
 export function Model(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('/hacker_room_low_poly-transformed.glb') as GLTFResult
 
-  const fragmentShader = `
-    varying vec3 vPosition;
+    const fragmentShader = `
+      varying vec3 vPosition;
 
-    void main() {
-      // Set the fragment color based on the object's position
-      gl_FragColor = vec4(vPosition, 1.0);
-    }
-  `;
+      void main() {
+        // Set the fragment color based on the object's position
+        gl_FragColor = vec4(vPosition, 1.0);
+      }
+    `;
 
   const vertexShader = `
     varying vec3 vPosition;
@@ -118,7 +118,7 @@ export function Model(props: JSX.IntrinsicElements['group']) {
   `;
 
   const uniforms = {
-    time: { value: 0 },
+    time: { value: 0 }, 
   };
 
   const customShaderMaterial = new THREE.ShaderMaterial({
@@ -126,7 +126,7 @@ export function Model(props: JSX.IntrinsicElements['group']) {
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
   });
-
+  
   nodes.ouden_tvpCube1_lambert4_0.material = customShaderMaterial;
 
 
