@@ -43,7 +43,7 @@ const Intro: React.FC = () => {
     
     const position = vector.add(direction.multiplyScalar(clampedDistance));
 
-    position.y += 0.4;
+    position.y += 0.5;
 
     setTargetPosition(position);
     AMBIENT_LIGHT_INTENSITY = Math.abs(mousePositionX) + Math.abs(mousePositionY);
