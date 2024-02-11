@@ -1,15 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Model } from '../../../public/Hacker_room_low_poly.tsx';
 import { EffectComposer, Pixelation } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
-const CAMERA_POSITION: [number, number, number] = [0.5, 0.8, 0.6];
+
 const INITIAL_TARGET_POSITION: THREE.Vector3 = new THREE.Vector3(-0.0689723849309587, 0.5851479096457078, 0.131899121745);
-const AMBIENT_LIGHT_INTENSITY: number = 0.5;
-const PIXELATION_GRANULARITY: number = 3;
+const CAMERA_POSITION: [number, number, number] = [0.5, 0.8, 0.6];
+const PIXELATION_GRANULARITY: number = 6;
 const FOV: number = 75;
+
+let AMBIENT_LIGHT_INTENSITY: number = 0;
 
 const Home: React.FC = () => {
   return (
@@ -22,13 +24,7 @@ const Home: React.FC = () => {
 const Intro: React.FC = () => {
   const [targetPosition, setTargetPosition] = useState<THREE.Vector3>(INITIAL_TARGET_POSITION);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera>();
-
-  useEffect(() => {
-    if (cameraRef.current) {
-      cameraRef.current.lookAt(targetPosition);
-    }
-  }, [targetPosition]);
+  const cameraRef = useRef<THREE.PerspectiveCamera>(null);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { clientX, clientY } = event;
@@ -47,7 +43,10 @@ const Intro: React.FC = () => {
     
     const position = vector.add(direction.multiplyScalar(clampedDistance));
 
+    position.y += 0.4;
+
     setTargetPosition(position);
+    AMBIENT_LIGHT_INTENSITY = Math.abs(mousePositionX) + Math.abs(mousePositionY);
   };
 
   return (
@@ -55,7 +54,7 @@ const Intro: React.FC = () => {
       ref={canvasRef}
       onMouseMove={handleMouseMove}
     >
-      <PerspectiveCamera makeDefault position={CAMERA_POSITION} fov={FOV} />
+      <PerspectiveCamera ref={cameraRef} makeDefault position={CAMERA_POSITION} fov={FOV} />
       <OrbitControls target={targetPosition} enableDamping={false} enablePan={false} />
       <ambientLight intensity={AMBIENT_LIGHT_INTENSITY} />
       <Model />
