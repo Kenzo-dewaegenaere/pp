@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Model } from '../../../public/Hacker_room_low_poly.tsx';
@@ -22,17 +22,30 @@ const Home: React.FC = () => {
 const Intro: React.FC = () => {
   const [targetPosition, setTargetPosition] = useState<THREE.Vector3>(INITIAL_TARGET_POSITION);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera>();
+
+  useEffect(() => {
+    if (cameraRef.current) {
+      cameraRef.current.lookAt(targetPosition);
+    }
+  }, [targetPosition]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { clientX, clientY } = event;
     const mousePositionX = (clientX / window.innerWidth) * 2 - 1;
     const mousePositionY = -(clientY / window.innerHeight) * 2 + 1;
 
-    const vector = new THREE.Vector3(mousePositionX, mousePositionY, 0.5);
+    const vector = new THREE.Vector3(mousePositionX, mousePositionY, 1);
     vector.unproject(new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, 0.1, 1000));
+
+    const distanceFactor = 20;
     const direction = vector.sub(new THREE.Vector3()).normalize();
-    const distance = (-vector.z / direction.z) / 5;
-    const position = vector.add(direction.multiplyScalar(distance));
+    const distance = (-vector.z / direction.z) / distanceFactor;
+    
+    const maxDistance = 10; 
+    const clampedDistance = Math.min(distance, maxDistance);
+    
+    const position = vector.add(direction.multiplyScalar(clampedDistance));
 
     setTargetPosition(position);
   };
