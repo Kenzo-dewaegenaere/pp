@@ -9,9 +9,10 @@ Title: Hacker Room low poly
 */
 
 import * as THREE from 'three'
-import React from 'react'
+import React, {useState} from 'react'
 import { useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
+import { useFrame } from '@react-three/fiber'
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -89,46 +90,63 @@ type ContextType = Record<string, React.ForwardRefExoticComponent<JSX.IntrinsicE
 export function Model(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('/hacker_room_low_poly-transformed.glb') as GLTFResult
 
-    const fragmentShader = `
-      varying vec3 vPosition;
+  const [isHovered, setIsHovered] = useState(false);
+
+  const fragmentShader = `
+       //varying vec2 vUv;
+       //uniform float u_time;
+
+       //void main() {
+       // THIS IS FOR GREEN AND BLACK
+       // vec2 uv = vUv;
+       //
+       // float cb = floor((uv.x + u_time) * 20.0) + floor((uv.y + u_time) * 20.0);
+       //
+       // if (mod(cb, 2.0) == 0.0) {
+       //     gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+       // } else {
+       //     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+       // }
+
+      varying vec2 vUv;
+      uniform float u_time;
 
       void main() {
-        // Set the fragment color based on the object's position
-        gl_FragColor = vec4(vPosition, 1.0);
+        vec2 uv = vUv;
+        float cb = floor((uv.x + u_time)*20.) + floor((uv.y + u_time)*20.);
+        gl_FragColor = vec4(1.,0.,0.,mod(cb, 2.0));
       }
-    `;
+  `;
 
   const vertexShader = `
-    varying vec3 vPosition;
-    uniform float time; // Time uniform for animation
-
+    precision mediump float;
+    varying vec2 vUv;
     void main() {
-      // Calculate animation factor based on time
-      float animationFactor = sin(time * 2.0);
-
-      // Apply animation to vertex position
-      vec3 animatedPosition = position + vec3(animationFactor * 0.1, 0.0, 0.0);
-
-      // Pass the animated position to the fragment shader
-      vPosition = animatedPosition;
-
-      // Set the vertex position
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(animatedPosition, 1.0);
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.);
+        gl_Position = projectionMatrix * mvPosition;
+        vUv = uv;
     }
   `;
 
   const uniforms = {
-    time: { value: 0 }, 
-  };
+    u_time: { type: "f", value: 0 }
+  }
 
-  const customShaderMaterial = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-  });
+  let customShaderMaterial;
+
+  if (!isHovered) {
+    customShaderMaterial = materials.blood_forestlambert2;
+  }else{
+    customShaderMaterial = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+    });
+  }
   
-  nodes.ouden_tvpCube1_lambert4_0.material = customShaderMaterial;
-
+  useFrame(({ clock }) => {
+    uniforms.u_time.value = clock.getElapsedTime() / 12.5;
+  });
 
   return (
     <group {...props} dispose={null}>
@@ -163,7 +181,7 @@ export function Model(props: JSX.IntrinsicElements['group']) {
       <mesh castShadow receiveShadow geometry={nodes.showerpPlane1_showerlambert2_0.geometry} material={materials.showerlambert2} position={[-0.763, 0.913, -1.723]} rotation={[Math.PI / 2, -0.066, 0]} scale={[0.516, 0.489, 0.745]} />
       <mesh castShadow receiveShadow geometry={nodes.whalepPlane1_whalelambert2_0.geometry} material={materials.whalelambert2} position={[-0.094, 0.84, -1.747]} rotation={[Math.PI / 2, -0.157, 0]} scale={[0.414, 0.392, 0.598]} />
       <mesh castShadow receiveShadow geometry={nodes.astronautpPlane1_astronautlambert2_0.geometry} material={materials.astronautlambert2} position={[-0.507, 0.686, -1.715]} rotation={[Math.PI / 2, 0.045, 0]} scale={[0.528, 0.528, 0.791]} />
-      <mesh castShadow receiveShadow geometry={nodes.blood_forestpPlane1_blood_forestlambert2_0.geometry} material={customShaderMaterial} position={[-1.161, 0.682, 0.64]} rotation={[1.471, 0, -Math.PI / 2]} scale={[0.516, 0.516, 0.978]} />
+      <mesh castShadow receiveShadow geometry={nodes.blood_forestpPlane1_blood_forestlambert2_0.geometry} material={customShaderMaterial} onPointerOver={() => setIsHovered(true)} onPointerOut={() => setIsHovered(false)} position={[-1.161, 0.682, 0.64]} rotation={[1.471, 0, -Math.PI / 2]} scale={[0.516, 0.516, 0.978]} />
       <instancedMesh args={[nodes.pCube1_hard_disclambert2_0.geometry, materials.hard_disclambert2, 17]} castShadow receiveShadow instanceMatrix={nodes.pCube1_hard_disclambert2_0.instanceMatrix} />
       <instancedMesh args={[nodes.pCube8_doos_1lambert2_0.geometry, materials.doos_1lambert2, 12]} castShadow receiveShadow instanceMatrix={nodes.pCube8_doos_1lambert2_0.instanceMatrix} />
       <instancedMesh args={[nodes.pCube15_lambert6_0.geometry, materials.lambert6, 14]} castShadow receiveShadow instanceMatrix={nodes.pCube15_lambert6_0.instanceMatrix} />
