@@ -32,7 +32,6 @@ const Intro: React.FC = () => {
   const [targetPosition, setTargetPosition] = useState<THREE.Vector3>(INITIAL_TARGET_POSITION);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera>(null);
-  const armsRef = useRef<THREE.Group>(null);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { clientX, clientY } = event;
