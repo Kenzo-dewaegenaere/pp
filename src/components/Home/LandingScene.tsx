@@ -2,14 +2,14 @@ import React, { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Model } from '../../../public/Hacker_room_low_poly.tsx';
+import Arms from '../Arms/Arms.tsx';
 import { EffectComposer, Pixelation, Vignette } from '@react-three/postprocessing';
-
 import * as THREE from 'three';
 
 
 const INITIAL_TARGET_POSITION: THREE.Vector3 = new THREE.Vector3(-0.0689723849309587, 0.5851479096457078, 0.131899121745);
 const CAMERA_POSITION: [number, number, number] = [0.5, 0.8, 0.6];
-const PIXELATION_GRANULARITY: number = 6;
+const PIXELATION_GRANULARITY: number = 0;
 const FOV: number = 75;
 
 let AMBIENT_LIGHT_INTENSITY: number = 0;
@@ -22,10 +22,17 @@ const Home: React.FC = () => {
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface ArmsProps {
+  position: [number, number, number];
+}
+
+
 const Intro: React.FC = () => {
   const [targetPosition, setTargetPosition] = useState<THREE.Vector3>(INITIAL_TARGET_POSITION);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+  const armsRef = useRef<THREE.Group>(null);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { clientX, clientY } = event;
@@ -56,6 +63,7 @@ const Intro: React.FC = () => {
       onMouseMove={handleMouseMove}
     >
       <PerspectiveCamera ref={cameraRef} makeDefault position={CAMERA_POSITION} fov={FOV} />
+      <Arms position={CAMERA_POSITION} />
       <OrbitControls target={targetPosition} enableDamping={false} enablePan={false} />
       <ambientLight intensity={AMBIENT_LIGHT_INTENSITY} />
       <Model />

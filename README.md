@@ -12,6 +12,11 @@ time to learn some react and typescript i guess
 - npm i
 - npm run dev
 
+# easy tools
+simple way to add objects (be in the same map of ur object, then run this command)
+    - gltfjsx
+        - npx gltfjsx arms.glb --types -T --keepmeshes -s --keepmaterials
+
 # Landing page progress
 
 ## TODO
