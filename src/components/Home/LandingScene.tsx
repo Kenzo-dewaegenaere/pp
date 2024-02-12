@@ -2,7 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Model } from '../../../public/Hacker_room_low_poly.tsx';
-import { EffectComposer, Pixelation } from '@react-three/postprocessing';
+import { EffectComposer, Pixelation, Vignette } from '@react-three/postprocessing';
+
 import * as THREE from 'three';
 
 
@@ -60,6 +61,7 @@ const Intro: React.FC = () => {
       <Model />
       <EffectComposer>
         <Pixelation granularity={PIXELATION_GRANULARITY} />
+        <Vignette eskil={true} offset={0.5} darkness={1.5} />
       </EffectComposer>
     </Canvas>
   );
